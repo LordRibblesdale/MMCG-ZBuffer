@@ -6,6 +6,7 @@ public class RayTracingZ extends JFrame {
   public int f;
   public static Scene scn;
   public static Main sv;
+
   public RayTracingZ (String s) {
     super(s);
     f = 700;
@@ -15,7 +16,7 @@ public class RayTracingZ extends JFrame {
     this.pack();
     scn = new Scene(0.1);
     scn.makeSphere(300, new Point(0,0, 1300), 50, 0.8, 0.3,
-        0.5/*, 0.1, 0.9*/);
+        0.5, 0.1, 0.9);
     /* il primo parametro e’ il raggio della sfera;
      l’argomento Point e’ il centro: la variabile y
      e’ l’altezza e cresce verso il basso,
@@ -100,8 +101,9 @@ public class RayTracingZ extends JFrame {
         if(e.getKeyChar() == 'd') v = new Point(20,0,0);
         if(e.getKeyChar() == 'l') diff = -(diff - 0.5);
         if(e.getKeyChar() == 'p') ref = -(ref - 0.5);
-        System.out.println(diff+" "+ref);
-        for(int i=0; i<scn.pts.size(); i++){
+        //System.out.println(diff+" "+ref);
+        System.out.println(scn.size());
+        for(int i=0; i<scn.size(); i++){
           scn.pts.get(i).shift(v.per(-1));
           scn.pts.get(i).kDif = diff;
           scn.pts.get(i).kRef = ref;

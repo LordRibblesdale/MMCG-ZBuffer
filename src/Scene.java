@@ -10,7 +10,9 @@ public class Scene {
     pts = new ArrayList<Point>();
     obj = new ArrayList<Triangle>();
     lgt = new ArrayList<Light>();
-    amb = null;
+    if (MyJPanel.method == 1) {
+      amb = new Point(1);
+    }
   }
 
   public Scene(ArrayList<Triangle> objects) {

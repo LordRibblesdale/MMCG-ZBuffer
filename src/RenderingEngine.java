@@ -1,12 +1,12 @@
 import java.awt.*;
 
 class RenderingEngine{
-  static Color[][] pixelMatrix;
-  private static double[][] zBuffer;
-  private static int f, w, h;
-  //public Point p1, p2, p3, p4,left,right;
-  private static Point p[] = new Point[4];
-  private static Point camera, view;
+  public static Color[][] pixelMatrix;
+  public static double[][] zBuffer;
+  public static int f, w, h;
+  public Point p1, p2, p3, p4,left,right;
+  public static Point p[] = new Point[4];
+  public static Point camera, view;
 
   RenderingEngine(int width, int height, int focal){
     //Costruttore del renderer
@@ -137,7 +137,7 @@ class RenderingEngine{
     //spazio (double)
     // alle coordinate della pixelMatrix (int)
 
-    return (int) (Math.round(x));
+    return (int) (Math.round(x) > 255 ? 255 : (int) (Math.round(x)));
   }
   private static void scan(Point p1, Point p2, Point p3, int
       v, double zSlopeX, double zSlopeY, Triangle tr) {
@@ -165,35 +165,43 @@ class RenderingEngine{
 
     double rs = (p1.x - p3.x) / (p1.y - p3.y);
     double x, y, z, xl, xr, zx;
-    //int i, j;
+    int i, j;
 
-    Color c = tr.normal.getColor(); // ottengo il colore del
-    //triangolo (salvato come colore della normale)
-    // Nel caso in cui v=+1, si sta facendo lo scan del
+    Color c;
+
+    if (MyJPanel.method == 1) {
+      c = getShade(tr, RayTracingZ.scn);
+    } else {
+      c = tr.normal.getColor();
+    }
+    // trovo il
+    //valore d’illuminazione del triangolo nelle scena
+// Nel caso in cui v=+1, si sta facendo lo scan del
     //triangolo superiore, dall’alto verso il basso
-    // (dunque dal vertice in alto verso il lato orizzontale)
-
-    if (v == 1) {
+// (dunque dal vertice in alto verso il lato orizzontale)
+    if(v==1){
       z = p1.z;
       xl = xr = p1.x;
-      for (y = p1.y; (y) <= p3.y; y++) {
-        // questo for() viene eseguito per ogni riga del triangolo
-        zx = z;
-
+      for(y=p1.y; (y)<=p3.y; y++){
+// questo for() viene eseguito per ogni riga del
+        //triangolo
+            zx = z;
         for(x=xl; x<=xr; x++){
-          //questo for() viene eseguito per ogni pixel della stessa riga
-          // con draw(), scrivo sulla matrice di pixel il valore del colore c nel punto x,y del
-          // viweplane e aggiorno in tali coordinate anche il valore
-          // dello zBuffer
-
+//questo for() viene eseguito per ogni pixel
+         // della stessa riga
+// con draw(), scrivo sulla matrice di pixel il
+          //valore del colore c nel punto x,y del
+              //viweplane
+// e aggiorno in tali coordinate anche il valore
+          //dello zBuffer
           draw(x, y, zx, c);
-          // ottengo il nuovo valore di profondita’ per la prossima iterazione (pixel di destra)
+// ottengo il nuovo valore di profondit\‘{a} per
+          //la prossima iterazione (pixel di destra)
           zx += zSlopeX;
-        }
-
-        z += ls*zSlopeX + zSlopeY;
-        // ottengo il nuovo valore di profondita’ per la prossima iterazione
-        //(riga sottostante)
+        }z
+            += ls*zSlopeX + zSlopeY; // ottengo il nuovo
+        //valore di profondit\‘{a} per la prossima
+        //iterazione (riga sottostante)
         xl += ls; // ottengo l’estremo sinistro dei valori di x per la prossima riga
         xr += rs; // ottengo l’estremo destro dei valori di x per la prossima riga
         // xl e xr sono gli estremi della riga per il ciclo interno, sono usati nella condizione
@@ -250,5 +258,121 @@ class RenderingEngine{
     Point t = new Point(p[i]);
     p[i] = new Point(p[j]);
     p[j] = new Point(t);
+  }
+
+  public static Color getShade(Triangle tr, Scene scn){
+// getShade() ottiene l’illuminazione del trianagolo tr
+//    nella scena, calcolando
+// il contributo ambientale, diffusivo e riflessivo
+    Point N = tr.getNormal(); // ottengo la normale del
+//    triangolo
+    Point p = tr.getCenter(); // ottengo il centro del
+//    triangolo
+    return getShade(p, N, scn);
+  }
+
+  public static Color getShade(Point p, Point N, Scene scn){
+// getShade ottiene l’illuminazione del punto p nella
+    //scena, con normale N,
+// calcolando il contributo ambientale, diffusivo
+    //(Lambert) e riflessivo (Phong)
+// Per il solo z-buffer, questa classe non serviva: lo
+    //z-buffer possiede come input
+// il colore di ciascun triangolo, senza doverlo ricavare
+    //dai dati geometrici 3D,
+// ossia dalla posizione di osservatore, luci e versore
+        //normale.
+// Ma qui passiamo allo z-buffer, per ciascun poligono,
+            //un colore appropriato:
+// quello che si ottiene da questi dati geometrici
+    //applicando la equazione di
+// illuminazione di Phong. Quindi questo metodo di
+    //z-buffer e’ in realta’ una
+// accelerazione tramite z-buffer del Ray Tracing (non
+   // ricorsivo).
+// inizializzazione di variabili
+    double intensity;
+    double d, att, diff=0,shadeDiff=0,shadeRef=0,ref=0;
+    Light light = null;
+    Point amb = scn.amb; // amb e’ il colore della luce
+    //ambientale
+    Point shade;
+    Point clr = N.clr; // il colore del triangolo e’ salvato
+    //nella sua normale
+    Point shadeDiffFinal = new Point(0,0,0);
+    Point shadeRefFinal = new Point(0,0,0);
+    Point L, V;
+    Point o = new Point(0,0,-f); // o rappresenta il centro
+    //di proiezione, ed e’ dunque l’origine
+// di tutti i raggi di vista
+    for(int i=0; i<scn.lgt.size(); i++){
+// per ogni luce della scena, calcolo il suo
+      //contributo d’illuminazione
+          light = scn.lgt.get(i);
+// V e’ il vettore che congiunge il centro del
+     // triangolo al centro di proiezione o
+      V = p.to(o);
+// L e’ il vettore che congiunge il centro del
+      //triangolo alla posizione della luce
+// (chiamato anche ’raggio d’ombra’)
+      L = p.to(light);
+// d e’ la distanza del triangolo dalla luce
+      d = L.norm();
+// att e’ il coefficiente di attenuazione della luce
+      //dato dalla distanza d
+      att = light.getAtt(d);
+      if(L.dot(N)<0){
+// Se la superficie del triangolo non ’vede’ la
+       // luce,
+// non calcolo affatto il contributo di questa
+       //     sorgente e
+// salto direttamente alla prossima luce
+        continue;
+      }
+      intensity = light.i * att; // intensity e’
+      //l’intensit\‘{a} luminosa che raggiunge il punto
+          L = L.normalize(); // normalizzo il raggio d’ombra
+      V = V.normalize(); // normalizzo il raggio di vista
+// L e V sono ora versori
+/* diff e’ il contributo d’illuminazione, diffusivo
+calcolato con la formula
+di Lambert: diff = <L,N>. Notare che a questo punto
+della funzione diff non
+puo’ essere negativo per il controllo effettuato
+prima */
+      diff = L.dot(N);
+      shadeDiff += diff*intensity; // incremento il
+      //contributo diffusivo
+/* ref e’ il contributo di luce riflettente calcolato
+con la formula
+di Phong: ref = 2 <N,L> <N,V> - <L,V> */
+      ref = 2*N.dot(L)*N.dot(V) - L.dot(V);
+// se ref e’ positivo, incremento l’illuminazione di
+    // ref, moltiplicata per il coefficiente di
+    // riflessione al punto
+      if(ref>0) shadeRef += ref*ref*intensity;
+    }
+
+    shadeDiff *= p.kDif; // moltiplico diff per il
+   //coefficiente diffusivo del punto e quello
+   //d’attenuazione
+    shadeRef *= p.kRef; // moltiplico diff per il
+   //coefficiente diffusivo del punto e quello
+   //d’attenuazione
+       shadeDiffFinal = clr.per(shadeDiff);
+    shadeRefFinal = new Point(shadeRef, shadeRef, shadeRef);
+    shade = shadeRefFinal.sum(shadeDiffFinal);
+    amb.print();
+    shade = shade.sum((amb.star(clr)).per(p.kDif)); //
+    //incremento del contributo ambientale
+// normalizzo a valori compresi fra 0 e 255
+    shade = shade.per(255);
+// contengo l’illuminazione fra il valore massimo (255) e
+    //minimo (0)
+    shade.clamp(0,255);
+//intShade = round(shade); // arrotondo all’intero piu’
+   // vicino per la codifica RGB
+    return new Color(round(shade.x), round(shade.y),
+        round(shade.z)); // restituisco l’illuminazione finale
   }
 }
