@@ -5,10 +5,13 @@ public class Point{
   public double x;
   public double y;
   public double z;
+  // coefficiente diffusivo e riflessivo
+  public double kRef,kDif;
   // colore
   public Point clr;
   // versore normale al punto
   public Point normal;
+
   public Point(){
 //costruttore
     this.set(0, 0, 0);
@@ -27,6 +30,8 @@ public class Point{
 //costruttore con coordiante e colore
     this.set(q, p, d);
     clr = new Point(r,g,b);
+    kRef = 0.3;
+    kDif = 0.7;
   }
   public Point(Point P){
 // costruttore che copia un altro punto P
@@ -36,7 +41,6 @@ public class Point{
   }
   public void set(double a, double b, double c){
 // set delle coordinate e colore a grigio 70% circa
-
     x = a;
     y = b;
     z = c;
