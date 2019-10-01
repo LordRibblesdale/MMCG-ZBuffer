@@ -8,14 +8,16 @@ class MyJPanel extends JPanel {
   public Point p1 = new Point(300,300,20);
   public float r, g, b;
   public static int f,j,i,h,w;
+  public int method;
 
-  public MyJPanel(int f){
+  public MyJPanel(int f, int method){
     super();
     this.f = f;
     w = 720;
     h = 480;
     this.setPreferredSize(new Dimension(w, h));
     this.setVisible(true);
+    this.method = method;
 //PList.add(p1);
   }
 
@@ -24,7 +26,11 @@ class MyJPanel extends JPanel {
     super.paintComponent(gr);
     gr.setColor(new Color(0,0,0));
     gr.fillRect(0, 0, this.getWidth(), this.getHeight());
-    RenderingEngine.render(ZBuffer.scn);
+    if (method == 0) {
+      RenderingEngine.render(ZBuffer.scn);
+    } else {
+      RenderingEngine.render(RayTracingZ.scn);
+    }
     for(i=0; i<w; i++)
       for(j=0; j<h; j++){
         gr.setColor(RenderingEngine.pixelMatrix[i][j]);

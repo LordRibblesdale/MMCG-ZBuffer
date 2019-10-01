@@ -4,7 +4,7 @@ public class Triangle{
   Point a;
   Point b;
   Point c;
-  private Point center;
+  public Point center;
   Point normal;
 
   Triangle(Point x, Point y, Point z){

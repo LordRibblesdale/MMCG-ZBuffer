@@ -16,7 +16,7 @@ public class ZBuffer extends JFrame {
 
     super(s);
     f = 700;
-    canvas = new MyJPanel(f);
+    canvas = new MyJPanel(f, 0);
     this.add(canvas);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.pack();
