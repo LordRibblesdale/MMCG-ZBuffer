@@ -34,6 +34,7 @@ public class ZBuffer extends JFrame {
       backspace/delete
       */
       @Override public void keyPressed(KeyEvent e) {
+        v = new Point(0, 0, 0);
         if(e.getKeyCode() == KeyEvent.VK_UP) {
           v = new Point(0,-10,0);
         }

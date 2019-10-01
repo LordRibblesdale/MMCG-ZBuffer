@@ -46,6 +46,7 @@ public class RayTracingZ extends JFrame {
       public double ref = r;
       public Point v;
       @Override public void keyPressed(KeyEvent e) {
+        v = new Point(0, 0, 0);
         /*
         if(e.getKeyCode() == KeyEvent.VK_UP) v = new
             Point(0,-10,0);
@@ -94,7 +95,7 @@ public class RayTracingZ extends JFrame {
       }
 
       @Override public void keyTyped(KeyEvent e) {
-        v=new Point(0,0,0);
+        v = new Point(0,0,0);
         if(e.getKeyChar() == 'w') v = new Point(0,-20,0);
         if(e.getKeyChar() == 's') v = new Point(0,20,0);
         if(e.getKeyChar() == 'a') v = new Point(-20,0,0);
@@ -102,8 +103,7 @@ public class RayTracingZ extends JFrame {
         if(e.getKeyChar() == 'l') diff = -(diff - 0.5);
         if(e.getKeyChar() == 'p') ref = -(ref - 0.5);
         //System.out.println(diff+" "+ref);
-        System.out.println(scn.size());
-        for(int i=0; i<scn.size(); i++){
+        for(int i=0; i<scn.pts.size(); i++){
           scn.pts.get(i).shift(v.per(-1));
           scn.pts.get(i).kDif = diff;
           scn.pts.get(i).kRef = ref;

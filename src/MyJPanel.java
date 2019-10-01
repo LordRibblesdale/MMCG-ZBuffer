@@ -18,7 +18,7 @@ class MyJPanel extends JPanel {
     this.setPreferredSize(new Dimension(w, h));
     this.setVisible(true);
     MyJPanel.method = method;
-//PList.add(p1);
+    PList.add(p1);
   }
 
   @Override
