@@ -5,7 +5,6 @@ public class ZBuffer extends JFrame {
   public MyJPanel canvas;
   public int f;
   public static Scene scn;
-  public static ZBuffer sv;
 
   public ZBuffer(String s) {
     // Main si occupa solo di far eseguire il programma e
@@ -20,7 +19,7 @@ public class ZBuffer extends JFrame {
     this.add(canvas);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.pack();
-    scn = new Scene(/*0.1*/);
+    scn = new Scene(0.1);
     scn.makeSphere(300, new Point(0,0, 1300), 50, 0.8, 0.3,
         0.5);
     scn.makeQuad(new Point(0,-450,1600), new

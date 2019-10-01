@@ -145,7 +145,7 @@ public class Point{
   }
   public void print(){
 // stampa a schermo delle coordinate del punto
-    System.out.println("p("+x+" "+y+" "+z+")");
+    //System.out.println("p("+x+" "+y+" "+z+")");
   }
   public Color getColor(){
     Point c = (this.clr.per(255)).clamp(0, 255);
